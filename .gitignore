@@ -1,0 +1,10 @@
+/target
+/out
+/logs
+/renren-common/src/main/resources/db.properties
+.settings
+.classpath
+.project
+.idea
+*.iml
+*.class
