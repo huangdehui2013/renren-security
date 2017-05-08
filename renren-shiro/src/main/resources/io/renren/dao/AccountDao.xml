@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.AccountDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.entity.AccountEntity" id="accountMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="accountName" column="account_name"/>
+        <result property="accountType" column="account_type"/>
+        <result property="parentAccountId" column="parent_account_id"/>
+        <result property="accountAmount" column="account_amount"/>
+        <result property="accountStatus" column="account_status"/>
+        <result property="address" column="address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.renren.entity.AccountEntity">
+		select * from tb_account where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.AccountEntity">
+		select * from tb_account
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="getAccountListByUserIdList" resultMap="accountMap">
+		select * from tb_account where user_id in
+		<foreach item="id" collection="userIdList" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+	
+	<!-- 获取所有的商务账户 -->
+	<select id="getAllCommerceAccount" resultMap="accountMap">
+		select * from tb_account where account_type=2
+	</select>
+	
+	<!-- 获取当前在职的商务账户 -->
+	<select id="getAllActiveCommerceAccount">
+		select * from tb_account where account_type=2 and account_status = 1
+	</select>
+	
+	<select id="getAccountByUserId" resultMap="accountMap">
+		select * from tb_account where user_id = #{userId}
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from tb_account 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.AccountEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into tb_account
+		(
+			`user_id`, 
+			`account_name`, 
+			`account_type`, 
+			`parent_account_id`, 
+			`account_amount`, 
+			`account_status`,
+			`address`, 
+			`create_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{userId}, 
+			#{accountName}, 
+			#{accountType}, 
+			#{parentAccountId}, 
+			#{accountAmount}, 
+			#{accountStatus}, 
+			#{address}, 
+			now(), 
+			now()
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.AccountEntity">
+		update tb_account 
+		<set>
+			<if test="accountName != null">`account_name` = #{accountName}, </if>
+			<if test="parentAccountId != null">`parent_account_id` = #{parentAccountId}, </if>
+			<if test="accountStatus != null">`account_Status` = #{accountStatus}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			`update_time` = now()
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from tb_account where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from tb_account where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

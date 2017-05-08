@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.dao.ClickShowDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.entity.ClickShowEntity" id="clickShowMap">
+        <result property="id" column="id"/>
+        <result property="domainName" column="domain_name"/>
+        <result property="accountId" column="account_id"/>
+        <result property="clickNum" column="click_num"/>
+        <result property="showNum" column="show_num"/>
+        <result property="hourStand" column="hour_stand"/>
+        <result property="customerFee" column="customer_fee"/>
+        <result property="webMasterOwn" column="web_master_own"/>
+        <result property="createDate" column="create_date"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="io.renren.entity.ClickShowEntity">
+		select * from tb_click_show where id = #{value}
+	</select>
+
+	<select id="queryList" resultType="io.renren.entity.ClickShowEntity">
+		select * from tb_click_show
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from tb_click_show 
+	</select>
+	 
+	<insert id="save" parameterType="io.renren.entity.ClickShowEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into tb_click_show
+		(
+			`domain_name`, 
+			`account_id`, 
+			`click_num`, 
+			`show_num`, 
+			`hour_stand`, 
+			`customer_fee`, 
+			`web_master_own`, 
+			`create_date`, 
+			`create_time`, 
+			`update_time`
+		)
+		values
+		(
+			#{domainName}, 
+			#{accountId}, 
+			#{clickNum}, 
+			#{showNum}, 
+			#{hourStand}, 
+			#{customerFee}, 
+			#{webMasterOwn}, 
+			#{createDate}, 
+			#{createTime}, 
+			#{updateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="io.renren.entity.ClickShowEntity">
+		update tb_click_show 
+		<set>
+			<if test="domainName != null">`domain_name` = #{domainName}, </if>
+			<if test="accountId != null">`account_id` = #{accountId}, </if>
+			<if test="clickNum != null">`click_num` = #{clickNum}, </if>
+			<if test="showNum != null">`show_num` = #{showNum}, </if>
+			<if test="hourStand != null">`hour_stand` = #{hourStand}, </if>
+			<if test="customerFee != null">`customer_fee` = #{customerFee}, </if>
+			<if test="webMasterOwn != null">`web_master_own` = #{webMasterOwn}, </if>
+			<if test="createDate != null">`create_date` = #{createDate}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from tb_click_show where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from tb_click_show where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

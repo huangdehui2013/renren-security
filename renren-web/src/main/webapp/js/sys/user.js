@@ -5,6 +5,20 @@ $(function () {
         colModel: [			
 			{ label: '用户ID', name: 'userId', index: "user_id", width: 45, key: true },
 			{ label: '用户名', name: 'username', width: 75 },
+			{ label: '账户名称', name: 'accountName', width: 75 },
+			{ label: '所属商务', name: 'parentAccountName', width: 75 },
+			{ label: '账户类型', name: 'accountType', width: 80, formatter: function(value, options, row){
+				if(value===0){return '<span class="label label-danger">无</span>';}
+				else if(value===1){return '<span class="label label-danger">管理员</span>';}
+				else if(value===2){return '<span class="label label-danger">商务</span>';}
+				else if(value===3){return '<span class="label label-danger">站长</span>';}
+				else if(value===4){return '<span class="label label-danger">渠道客户</span>';}
+				else{
+					return '<span class="label label-danger">无</span>';
+				}
+			}},
+			{ label: '账户余额', name: 'address', width: 75 },
+			{ label: '客户具体地址', name: '', width: 75 },
 			{ label: '邮箱', name: 'email', width: 90 },
 			{ label: '手机号', name: 'mobile', width: 100 },
 			{ label: '状态', name: 'status', width: 80, formatter: function(value, options, row){
@@ -50,10 +64,14 @@ var vm = new Vue({
 		showList: true,
 		title:null,
 		roleList:{},
+		commerceList:{},
 		user:{
 			status:1,
 			roleIdList:[]
-		}
+		},
+		accountTypeOption: [{ text: '无', value: '0' },{ text: '管理员', value: '1' },
+		                    { text: '商务', value: '2' },{ text: '站长', value: '3'}
+		                    ,{ text: '客户渠道', value: '4' }] 
 	},
 	methods: {
 		query: function () {
@@ -67,6 +85,7 @@ var vm = new Vue({
 			
 			//获取角色信息
 			this.getRoleList();
+			this.getCommerceList();
 		},
 		update: function () {
 			var userId = getSelectedRow();
@@ -80,6 +99,7 @@ var vm = new Vue({
 			vm.getUser(userId);
 			//获取角色信息
 			this.getRoleList();
+			this.getCommerceList();
 		},
 		del: function () {
 			var userIds = getSelectedRows();
@@ -131,11 +151,17 @@ var vm = new Vue({
 				vm.roleList = r.list;
 			});
 		},
+		getCommerceList:function(){
+			$.get("../sys/user/commercelist", function(r){
+				vm.commerceList = r.list;
+			});
+		},
 		reload: function (event) {
 			vm.showList = true;
 			var page = $("#jqGrid").jqGrid('getGridParam','page');
 			$("#jqGrid").jqGrid('setGridParam',{ 
-                postData:{'username': vm.q.username},
+                postData:{'username': vm.q.username,
+                		  'accountType':vm.q.accountType},
                 page:page
             }).trigger("reloadGrid");
 		}

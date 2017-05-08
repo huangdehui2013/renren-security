@@ -2,22 +2,31 @@ package io.renren.controller;
 
 import io.renren.annotation.SysLog;
 import io.renren.entity.SysUserEntity;
+import io.renren.service.AccountService;
 import io.renren.service.SysUserRoleService;
 import io.renren.service.SysUserService;
-import io.renren.utils.*;
-import io.renren.validator.group.AddGroup;
-import io.renren.validator.group.UpdateGroup;
+import io.renren.utils.Constant;
+import io.renren.utils.PageUtils;
+import io.renren.utils.Query;
+import io.renren.utils.R;
+import io.renren.utils.ShiroUtils;
 import io.renren.validator.Assert;
 import io.renren.validator.ValidatorUtils;
+import io.renren.validator.group.AddGroup;
+import io.renren.validator.group.UpdateGroup;
+
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 系统用户
@@ -33,6 +42,8 @@ public class SysUserController extends AbstractController {
 	private SysUserService sysUserService;
 	@Autowired
 	private SysUserRoleService sysUserRoleService;
+	@Autowired
+	private AccountService accountService;
 	
 	/**
 	 * 所有用户列表
@@ -48,6 +59,7 @@ public class SysUserController extends AbstractController {
 		//查询列表数据
 		Query query = new Query(params);
 		List<SysUserEntity> userList = sysUserService.queryList(query);
+		accountService.addUserListAccountInfo(userList);
 		int total = sysUserService.queryTotal(query);
 		
 		PageUtils pageUtil = new PageUtils(userList, total, query.getLimit(), query.getPage());
@@ -95,7 +107,7 @@ public class SysUserController extends AbstractController {
 	@RequiresPermissions("sys:user:info")
 	public R info(@PathVariable("userId") Long userId){
 		SysUserEntity user = sysUserService.queryObject(userId);
-		
+		accountService.addUserAccountInfo(user);
 		//获取用户所属的角色列表
 		List<Long> roleIdList = sysUserRoleService.queryRoleIdList(userId);
 		user.setRoleIdList(roleIdList);
@@ -114,6 +126,7 @@ public class SysUserController extends AbstractController {
 		
 		user.setCreateUserId(getUserId());
 		sysUserService.save(user);
+		accountService.saveWhenInsertUser(user);
 		
 		return R.ok();
 	}
@@ -129,7 +142,7 @@ public class SysUserController extends AbstractController {
 		
 		user.setCreateUserId(getUserId());
 		sysUserService.update(user);
-		
+		accountService.updateWhenInsertUser(user);
 		return R.ok();
 	}
 	

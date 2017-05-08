@@ -2,10 +2,12 @@ package io.renren.entity;
 
 import io.renren.validator.group.AddGroup;
 import io.renren.validator.group.UpdateGroup;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -67,6 +69,15 @@ public class SysUserEntity implements Serializable {
 	 * 创建时间
 	 */
 	private Date createTime;
+	
+	
+	//以下是关于账户体系的字段
+	private String accountName;				//账户名称  可以是客户的姓名
+	private Integer parentAccountId;		//站长或者渠道属于哪个商务
+	private String parentAccountName;		//站长或者渠道所属哪个商务账户名称
+	private BigDecimal accountAmount;		//账户余额
+	private String address;					//用户住址
+	private Integer accountType;			//用户类型1管理员 2商务 3站长 4渠道客户
 
 	/**
 	 * 设置：
@@ -194,6 +205,54 @@ public class SysUserEntity implements Serializable {
 
 	public void setCreateUserId(Long createUserId) {
 		this.createUserId = createUserId;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public Integer getParentAccountId() {
+		return parentAccountId;
+	}
+
+	public void setParentAccountId(Integer parentAccountId) {
+		this.parentAccountId = parentAccountId;
+	}
+
+	public String getParentAccountName() {
+		return parentAccountName;
+	}
+
+	public void setParentAccountName(String parentAccountName) {
+		this.parentAccountName = parentAccountName;
+	}
+
+	public BigDecimal getAccountAmount() {
+		return accountAmount;
+	}
+
+	public void setAccountAmount(BigDecimal accountAmount) {
+		this.accountAmount = accountAmount;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public Integer getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(Integer accountType) {
+		this.accountType = accountType;
 	}
 	
 }
