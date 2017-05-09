@@ -2,6 +2,7 @@ package io.renren.controller;
 
 import io.renren.annotation.SysLog;
 import io.renren.entity.SysUserEntity;
+import io.renren.optionmodel.OptionVo;
 import io.renren.service.AccountService;
 import io.renren.service.SysUserRoleService;
 import io.renren.service.SysUserService;
@@ -70,7 +71,12 @@ public class SysUserController extends AbstractController {
 	@RequestMapping("/commercelist")
 	@RequiresPermissions("sys:user:list")
 	public R getCommerceList(){
-		return R.ok().put("list", accountService.getActiveAccountOption());
+		OptionVo noneOption = new OptionVo();
+		noneOption.setValue("0");
+		noneOption.setShowValue("无");
+		List<OptionVo> list = accountService.getActiveAccountOption();
+		list.add(0,noneOption);
+		return R.ok().put("list", list);
 	}
 	
 	/**

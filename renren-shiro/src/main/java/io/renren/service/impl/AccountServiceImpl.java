@@ -126,7 +126,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	/**
-	 * 保存用户的时候添加账户信息
+	 * 保存用户的时候添加账户信息getUserType(sysUser.getRoleIdList())
 	 */
 	@Override
 	public void saveWhenInsertUser(SysUserEntity sysUser) {
@@ -142,7 +142,7 @@ public class AccountServiceImpl implements AccountService {
 		account.setAddress(sysUser.getAddress());
 		account.setParentAccountId(sysUser.getParentAccountId());
 		account.setUserId(sysUser.getUserId());
-		account.setAccountType(getUserType(sysUser.getRoleIdList()));
+		account.setAccountType(sysUser.getAccountType());
 		accountDao.save(account);
 		
 	}

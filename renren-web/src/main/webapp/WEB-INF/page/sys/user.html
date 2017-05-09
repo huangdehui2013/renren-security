@@ -81,6 +81,11 @@
 			<div class="form-group">
 			   	<div class="col-sm-2 control-label">所属哪个商务</div>
 			   	<div class="col-sm-10">
+			   	  	<select v-model="user.accountType">  
+					  <option v-for="option in commerceList" v-bind:value="user.parentAccountId">  
+					    	{{ option.valueShow }}  
+					  </option>  
+					</select> 
 <!-- 			   	  <select class="form-control" v-model="user.accountParentId"> -->
 <!-- 			   	  	<option value="0">无</option> -->
 <!-- 					<option value="1"></option> -->
