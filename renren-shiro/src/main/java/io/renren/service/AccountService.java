@@ -2,6 +2,7 @@ package io.renren.service;
 
 import io.renren.entity.AccountEntity;
 import io.renren.entity.SysUserEntity;
+import io.renren.optionmodel.OptionVo;
 
 import java.util.List;
 import java.util.Map;
@@ -52,4 +53,10 @@ public interface AccountService {
 	 * @param sysUser
 	 */
 	void updateWhenInsertUser(SysUserEntity sysUser);
+	
+	/**
+	 * 获取option展示的二级用户-商务的下拉选项列表
+	 * @return
+	 */
+	List<OptionVo> getActiveAccountOption();
 }

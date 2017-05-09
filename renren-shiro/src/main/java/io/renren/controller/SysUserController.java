@@ -67,6 +67,12 @@ public class SysUserController extends AbstractController {
 		return R.ok().put("page", pageUtil);
 	}
 	
+	@RequestMapping("/commercelist")
+	@RequiresPermissions("sys:user:list")
+	public R getCommerceList(){
+		return R.ok().put("list", accountService.getActiveAccountOption());
+	}
+	
 	/**
 	 * 获取登录的用户信息
 	 */

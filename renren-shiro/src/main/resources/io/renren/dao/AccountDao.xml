@@ -57,6 +57,10 @@
 		select * from tb_account where user_id = #{userId}
 	</select>
 	
+	<select id="getActiveAccountOption" resultType="io.renren.optionmodel.OptionVo">
+		select distinct(id) as value,account_name as valueShow  from tb_account where account_type=2 and account_status = 1
+	</select>
+	
  	<select id="queryTotal" resultType="int">
 		select count(*) from tb_account 
 	</select>

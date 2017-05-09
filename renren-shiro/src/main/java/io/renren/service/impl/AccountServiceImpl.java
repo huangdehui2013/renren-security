@@ -3,6 +3,7 @@ package io.renren.service.impl;
 import io.renren.dao.AccountDao;
 import io.renren.entity.AccountEntity;
 import io.renren.entity.SysUserEntity;
+import io.renren.optionmodel.OptionVo;
 import io.renren.service.AccountService;
 import io.renren.utils.Constants;
 
@@ -192,6 +193,14 @@ public class AccountServiceImpl implements AccountService {
 		}else{
 			return 0;
 		}
+	}
+
+	/**
+	 * 获取所有在职商务人员列表作为前端的下拉筛选项
+	 */
+	@Override
+	public List<OptionVo> getActiveAccountOption() {
+		return accountDao.getActiveAccountOption();
 	}
 	
 }

@@ -6,7 +6,6 @@ $(function () {
 			{ label: '用户ID', name: 'userId', index: "user_id", width: 45, key: true },
 			{ label: '用户名', name: 'username', width: 75 },
 			{ label: '账户名称', name: 'accountName', width: 75 },
-			{ label: '所属商务', name: 'parentAccountName', width: 75 },
 			{ label: '账户类型', name: 'accountType', width: 80, formatter: function(value, options, row){
 				if(value===0){return '<span class="label label-danger">无</span>';}
 				else if(value===1){return '<span class="label label-danger">管理员</span>';}
@@ -17,6 +16,7 @@ $(function () {
 					return '<span class="label label-danger">无</span>';
 				}
 			}},
+			{ label: '所属商务', name: 'parentAccountName', width: 75 },
 			{ label: '账户余额', name: 'address', width: 75 },
 			{ label: '客户具体地址', name: '', width: 75 },
 			{ label: '邮箱', name: 'email', width: 90 },

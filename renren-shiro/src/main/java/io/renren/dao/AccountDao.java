@@ -1,6 +1,7 @@
 package io.renren.dao;
 
 import io.renren.entity.AccountEntity;
+import io.renren.optionmodel.OptionVo;
 
 import java.util.List;
 
@@ -40,5 +41,11 @@ public interface AccountDao extends BaseDao<AccountEntity> {
 	 * @return
 	 */
 	AccountEntity getAccountByUserId(@Param("userId") Long userId);
+	
+	/**
+	 * 获取所有在职二级用户的选择项  id 名称
+	 * @return
+	 */
+	List<OptionVo> getActiveAccountOption();
 	
 }
