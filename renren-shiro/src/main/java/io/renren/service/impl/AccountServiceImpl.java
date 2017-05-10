@@ -1,14 +1,18 @@
 package io.renren.service.impl;
 
+import io.renren.dao.AccountBillHistoryDao;
 import io.renren.dao.AccountDao;
+import io.renren.entity.AccountBillHistoryEntity;
 import io.renren.entity.AccountEntity;
 import io.renren.entity.SysUserEntity;
 import io.renren.optionmodel.OptionVo;
 import io.renren.service.AccountService;
 import io.renren.utils.Constants;
+import io.renren.utils.DateUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +25,8 @@ import org.springframework.stereotype.Service;
 public class AccountServiceImpl implements AccountService {
 	@Autowired
 	private AccountDao accountDao;
+	@Autowired
+	private AccountBillHistoryDao billHistoryDao;
 	
 	@Override
 	public AccountEntity queryObject(Integer id){
@@ -110,15 +116,19 @@ public class AccountServiceImpl implements AccountService {
 			return ;
 		}
 		
-		AccountEntity parentAccount = null;
 		AccountEntity account = accountDao.getAccountByUserId(sysUser.getUserId());
+		if(account==null){
+			return ;
+		}
 		sysUser.setAccountName(account.getAccountName());
 		sysUser.setAddress(account.getAddress());
 		sysUser.setParentAccountId(account.getParentAccountId());
 		sysUser.setAccountAmount(account.getAccountAmount());
 		sysUser.setAccountType(account.getAccountType());
 		
-		if(account.getParentAccountId()>0){
+		
+		if(account.getParentAccountId()!=null && account.getParentAccountId()>0){
+			AccountEntity parentAccount = null;
 			 parentAccount = accountDao.queryObject(account.getParentAccountId());
 			 sysUser.setParentAccountName(parentAccount.getAccountName());
 		}
@@ -158,6 +168,11 @@ public class AccountServiceImpl implements AccountService {
 		}
 		
 		AccountEntity account = accountDao.getAccountByUserId(sysUser.getUserId());
+		
+		if(account==null){
+			return;
+		}
+		
 		if(1==sysUser.getStatus()){
 			account.setAccountStatus(Constants.NORMAL_USE);
 		}else if(0==sysUser.getStatus()){
@@ -201,6 +216,40 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public List<OptionVo> getActiveAccountOption() {
 		return accountDao.getActiveAccountOption();
+	}
+
+	/**
+	 * 给账户充值或者结算
+	 */
+	@Override
+	public void updateAccountFee(SysUserEntity user) {
+		AccountEntity account = accountDao.getAccountByUserId(user.getUserId());	
+		if(account==null){
+			return;
+		}
+		account.setAccountAmount(user.getAccountAmount());
+		accountDao.updateAccountAmount(account);
+		
+		/*只有当时站长或者全都客户关于资金充值或者提取的时候才进行资金明细的记录  否则不记录*/
+		if(account.getAccountType()!=3 && account.getAccountType()!=4){
+			return;
+		}
+		
+		//插入充值或者支取金额记录
+		AccountBillHistoryEntity billHistory = new AccountBillHistoryEntity();
+		billHistory.setAccountId(account.getId());
+		billHistory.setAmountName(account.getAccountName());
+		billHistory.setBillMoney(user.getAccountAmount());
+		billHistory.setAccountType(account.getAccountType());
+		String currentDate = DateUtils.dateToStr(new Date(),"yyyy-MM-dd");
+		billHistory.setBillDate(currentDate);
+		if(Constants.DOMAIN_MASTER==account.getAccountType()){
+			billHistory.setAmountType(Constants.DOMAIN_MASTER_SUB);
+		}else{
+			billHistory.setAmountType(Constants.CUSTOMER_EDPOST);
+		}
+		billHistoryDao.save(billHistory);
+		
 	}
 	
 }

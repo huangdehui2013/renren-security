@@ -15,6 +15,9 @@
 			<if test="username != null and username.trim() != ''">
 				and `username` like concat('%',#{username},'%') 
 			</if>
+			<if test="accountType!=0 and accountType!=null">
+				and user_id in (select distinct(user_id) from sys_user_role where role_id  = #{accountType})
+			</if>
 		</where>
 		<choose>
 			<when test="sidx != null and sidx.trim() != ''">

@@ -48,4 +48,11 @@ public interface AccountDao extends BaseDao<AccountEntity> {
 	 */
 	List<OptionVo> getActiveAccountOption();
 	
+	/**
+	 * 更新用户余额信息
+	 * @param account
+	 * @return
+	 */
+	int updateAccountAmount(AccountEntity account);
+	
 }

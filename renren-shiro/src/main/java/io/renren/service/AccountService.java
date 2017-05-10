@@ -59,4 +59,10 @@ public interface AccountService {
 	 * @return
 	 */
 	List<OptionVo> getActiveAccountOption();
+	
+	/**
+	 * 根据传进来的用户信息更新账户的余额
+	 * @param user
+	 */
+	void updateAccountFee(SysUserEntity user);
 }

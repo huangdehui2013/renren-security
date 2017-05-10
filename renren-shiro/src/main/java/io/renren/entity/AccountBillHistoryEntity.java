@@ -23,7 +23,7 @@ public class AccountBillHistoryEntity implements Serializable {
 	//账户类型 3站长 4客户
 	private Integer accountType;
 	//账单产生的日期
-	private Date billDate;
+	private String billDate;
 	//产生的账单金额
 	private BigDecimal billMoney;
 	//1客户充值  2账户消耗  3站长赚取 4站长结算
@@ -72,13 +72,13 @@ public class AccountBillHistoryEntity implements Serializable {
 	/**
 	 * 设置：账单产生的日期
 	 */
-	public void setBillDate(Date billDate) {
+	public void setBillDate(String billDate) {
 		this.billDate = billDate;
 	}
 	/**
 	 * 获取：账单产生的日期
 	 */
-	public Date getBillDate() {
+	public String getBillDate() {
 		return billDate;
 	}
 	/**

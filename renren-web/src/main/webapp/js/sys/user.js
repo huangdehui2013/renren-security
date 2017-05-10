@@ -17,8 +17,8 @@ $(function () {
 				}
 			}},
 			{ label: '所属商务', name: 'parentAccountName', width: 75 },
-			{ label: '账户余额', name: 'address', width: 75 },
-			{ label: '客户具体地址', name: '', width: 75 },
+			{ label: '账户余额', name: 'accountAmount', width: 75 },
+			{ label: '客户具体地址', name: 'address', width: 75 },
 			{ label: '邮箱', name: 'email', width: 90 },
 			{ label: '手机号', name: 'mobile', width: 100 },
 			{ label: '状态', name: 'status', width: 80, formatter: function(value, options, row){
@@ -62,6 +62,8 @@ var vm = new Vue({
 			username: null
 		},
 		showList: true,
+		updateAndSave:false,
+		addFee:false,
 		title:null,
 		roleList:{},
 		commerceList:{},
@@ -71,7 +73,10 @@ var vm = new Vue({
 		},
 		accountTypeOption: [{ text: '无', value: '0' },{ text: '管理员', value: '1' },
 		                    { text: '商务', value: '2' },{ text: '站长', value: '3'}
-		                    ,{ text: '客户渠道', value: '4' }] 
+		                    ,{ text: '客户渠道', value: '4' }],
+		accountTypeSearchOption: [{ text: '无', value: '0' },{ text: '管理员', value: '5' },
+		                    { text: '商务', value: '4' },{ text: '站长', value: '2'}
+		                    ,{ text: '客户渠道', value: '3' }] 
 	},
 	methods: {
 		query: function () {
@@ -79,6 +84,8 @@ var vm = new Vue({
 		},
 		add: function(){
 			vm.showList = false;
+			vm.addFee=false;
+			vm.updateAndSave=true;
 			vm.title = "新增";
 			vm.roleList = {};
 			vm.user = {status:1,roleIdList:[]};
@@ -94,12 +101,27 @@ var vm = new Vue({
 			}
 			
 			vm.showList = false;
+			vm.addFee=false;
+			vm.updateAndSave=true;
             vm.title = "修改";
 			
 			vm.getUser(userId);
 			//获取角色信息
 			this.getRoleList();
 			this.getCommerceList();
+		},
+		fee: function () {
+			var userId = getSelectedRow();
+			if(userId == null){
+				return ;
+			}
+			
+			vm.showList = false;
+			vm.addFee=true;
+			updateAndSave=false;
+            vm.title = "账户充值与金额结算";
+			
+			vm.getAddFeeUser(userId);
 		},
 		del: function () {
 			var userIds = getSelectedRows();
@@ -141,8 +163,30 @@ var vm = new Vue({
 				}
 			});
 		},
+		addAccountFee: function (event) {
+			var url = "../sys/user/addAccountFee";
+			$.ajax({
+				type: "POST",
+			    url: url,
+			    data: JSON.stringify(vm.user),
+			    success: function(r){
+			    	if(r.code === 0){
+						alert('充值或者结算成功', function(index){
+							vm.reload();
+						});
+					}else{
+						alert(r.msg);
+					}
+				}
+			});
+		},
 		getUser: function(userId){
 			$.get("../sys/user/info/"+userId, function(r){
+				vm.user = r.user;
+			});
+		},
+		getAddFeeUser: function(userId){
+			$.get("../sys/user/addFeeinfo/"+userId, function(r){
 				vm.user = r.user;
 			});
 		},
@@ -158,6 +202,8 @@ var vm = new Vue({
 		},
 		reload: function (event) {
 			vm.showList = true;
+			vm.addFee=false;
+			vm.updateAndSave=false;
 			var page = $("#jqGrid").jqGrid('getGridParam','page');
 			$("#jqGrid").jqGrid('setGridParam',{ 
                 postData:{'username': vm.q.username,

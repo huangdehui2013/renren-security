@@ -16,6 +16,7 @@ import io.renren.validator.ValidatorUtils;
 import io.renren.validator.group.AddGroup;
 import io.renren.validator.group.UpdateGroup;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -128,6 +129,22 @@ public class SysUserController extends AbstractController {
 	}
 	
 	/**
+	 * 账户相关用户信息
+	 */
+	@RequestMapping("/addFeeinfo/{userId}")
+	@RequiresPermissions("sys:user:info")
+	public R addFeeinfo(@PathVariable("userId") Long userId){
+		SysUserEntity user = sysUserService.queryObject(userId);
+		accountService.addUserAccountInfo(user);
+		user.setAccountAmount(new BigDecimal(0));
+		//获取用户所属的角色列表
+		List<Long> roleIdList = sysUserRoleService.queryRoleIdList(userId);
+		user.setRoleIdList(roleIdList);
+		
+		return R.ok().put("user", user);
+	}
+	
+	/**
 	 * 保存用户
 	 */
 	@SysLog("保存用户")
@@ -157,6 +174,16 @@ public class SysUserController extends AbstractController {
 		accountService.updateWhenInsertUser(user);
 		return R.ok();
 	}
+	
+	@SysLog("用户充值结算")
+	@RequestMapping("/addAccountFee")
+	@RequiresPermissions("sys:user:update")
+	public R addAccountFee(@RequestBody SysUserEntity user){
+		
+		accountService.updateAccountFee(user);
+		return R.ok();
+	}
+	
 	
 	/**
 	 * 删除用户

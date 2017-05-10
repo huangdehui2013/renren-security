@@ -58,7 +58,7 @@
 	</select>
 	
 	<select id="getActiveAccountOption" resultType="io.renren.optionmodel.OptionVo">
-		select distinct(id) as value,account_name as valueShow  from tb_account where account_type=2 and account_status = 1
+		select distinct(id) as value,account_name as showValue from tb_account where account_type=2 and account_status = 1
 	</select>
 	
  	<select id="queryTotal" resultType="int">
@@ -102,6 +102,14 @@
 			`update_time` = now()
 		</set>
 		where id = #{id}
+	</update>
+	
+	<update id="updateAccountAmount" parameterType="io.renren.entity.AccountEntity">
+		update tb_account
+		<set>`update_time` = now(),
+			<if test="accountAmount != null">account_amount = account_amount+#{accountAmount} </if>
+		</set>
+		where id=#{id}
 	</update>
 	
 	<delete id="delete">
